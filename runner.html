@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>S2preme emberdlo</title>
+    </head>
+    <body>
+        <canvas id="board" style="border: 1px solid blue;" width="512" height="512"></canvas>
+        <script src="main.js"></script>
+        <script>
+            class Pixel {
+                constructor(n){
+                    this.number = n;
+                }
+                number;
+                on = false;
+                toggle(){
+                    console.log("called toggle on "+this.number);
+                    this.on = !this.on;
+                    writeDot(this.number, this.on);
+                }
+            }
+            class Matrix {
+                constructor(){
+                    this.store = [];
+                    for(let i = 0;i<64;i++){
+                        writeDot(i, false);
+                        this.store.push(new Pixel(i));
+                    }
+                }
+                turn_all_off(){
+                    for(let i = 0;i<64;i++){
+                        this.store[i].on = false;
+                        writeDot(i, false);
+                    }
+                }
+                pixel(n){
+                    return this.store[n];
+                }
+            }
+            function writeDot(n, s){
+                const canvas = document.getElementById('board');
+                const ctx = canvas.getContext('2d');
+                if(s){
+                    ctx.fillStyle = 'red';
+                }else{
+                    ctx.fillStyle = 'grey';
+                }
+                ctx.beginPath();
+                ctx.arc(16*(n%8)+10, 16*Math.floor(n/8)+10, 8, 0, 2*Math.PI);
+                ctx.fill();
+            }
+            blackboard = {};
+            blackboard.matrix = new Matrix();
+            
+        </script>
+
+    </body>
+</html>
