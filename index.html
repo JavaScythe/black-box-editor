@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>S2preme</title>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+                color: white;
+            }
+            body {
+                background-color: black;
+                display: grid;
+                grid-template-columns: 50% 50%;
+            }
+            textarea {
+                width: 100%;
+                height: 90%;
+            }
+            iframe {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <textarea id="editor"></textarea>
+            <button>run</button><p>nothing</p>
+        </div>
+        <iframe id="preview" style="border: 1px solid red;"></iframe>
+        <script>
+            document.getElementsByTagName('button')[0].addEventListener('click', function() {
+                var editor = document.getElementById('editor');
+                fetch('/compile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: editor.value
+                    })
+                }).then(function(response) {
+                    document.getElementsByTagName('p')[0].innerText = 'running';
+                    return response.text();
+                }).then(function(text) {
+                    document.getElementsByTagName('p')[0].innerText = text;
+                    document.getElementById('preview').src = "/run";
+                })
+            });
+        </script>
+    </body>
+</html>
