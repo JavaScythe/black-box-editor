@@ -12,29 +12,110 @@
                     this.number = n;
                 }
                 number;
-                on = false;
+                value = false;
+                is_on(){
+                    return this.value;
+                }
+                is_off(){
+                    return !this.value;
+                }
+                turn_on(){
+                    this.value = true;
+                    writeDot(this.number, true);
+                }
+                turn_off(){
+                    this.value = false;
+                    writeDot(this.number, false);
+                }
                 toggle(){
                     console.log("called toggle on "+this.number);
-                    this.on = !this.on;
-                    writeDot(this.number, this.on);
+                    this.value = !this.value;
+                    writeDot(this.number, this.value);
+                }
+            }
+
+            class Slice {
+                start;
+                end;
+                constructor(s, e){
+                    this.start = s;
+                    this.end = e;
+                }
+                turn_all_on(){
+                    for(let i = this.start;i<this.end;i++){
+                        blackboard.matrix.pixels[i].turn_on();
+                    }
+                }
+                turn_all_off(){
+                    for(let i = this.start;i<this.end;i++){
+                        blackboard.matrix.pixels[i].turn_off();
+                    }
+                }
+                set_from_integers(integers){
+                    for(let i = this.start;i<this.end;i++){
+                        if(integers[i] == 1){
+                            blackboard.matrix.pixels[i].turn_on();
+                        }else{
+                            blackboard.matrix.pixels[i].turn_off();
+                        }
+                    }
+                }
+                get_length(){
+                    return this.end-this.start;
+                }
+            }
+            class Piezo {
+                tone(freq){
+                    console.log("tone "+freq);
+                }
+                no_tone(){
+                    console.log("no tone");
                 }
             }
             class Matrix {
                 constructor(){
-                    this.store = [];
+                    this.pixels = [];
                     for(let i = 0;i<64;i++){
                         writeDot(i, false);
-                        this.store.push(new Pixel(i));
+                        this.pixels.push(new Pixel(i));
                     }
                 }
                 turn_all_off(){
                     for(let i = 0;i<64;i++){
-                        this.store[i].on = false;
+                        this.pixels[i].on = false;
                         writeDot(i, false);
                     }
                 }
+                turn_all_on(){
+                    for(let i = 0;i<64;i++){
+                        this.pixels[i].on = true;
+                        writeDot(i, true);
+                    }
+                }
+                set_from_integers(integers){
+                    for(let i = 0;i<64;i++){
+                        if(integers[i] == 1){
+                            this.pixels[i].turn_on();
+                        }else{
+                            this.pixels[i].turn_off();
+                        }
+                    }
+                }
+                slice(start, end){
+                    return new Slice(start, end);
+                }
+                row(y){
+                    let row = [];
+                    for(let i = 0;i<8;i++){
+                        row.push(this.pixels[i*8+y]);
+                    }
+                    return row;
+                }
+                pixel_xy(x, y){
+                    return this.pixels[x*8+y];
+                }
                 pixel(n){
-                    return this.store[n];
+                    return this.pixels[n];
                 }
             }
             function writeDot(n, s){
@@ -51,6 +132,7 @@
             }
             blackboard = {};
             blackboard.matrix = new Matrix();
+            blackboard.piezo = new Piezo();
             
         </script>
 
